@@ -19,3 +19,10 @@
 
 # Go workspace file
 go.work
+
+# Binary
+/cieps-server
+
+# Test Certificates & Keys
+/server.crt
+/server.key
