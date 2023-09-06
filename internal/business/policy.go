@@ -2,19 +2,27 @@ package business
 
 import (
 	"crypto"
+	"crypto/ecdsa"
+	"crypto/elliptic"
 	"crypto/rand"
-	"crypto/rsa"
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/asn1"
 	"fmt"
 	"math/big"
+	"sync"
 	"time"
 
 	"github.com/hashicorp/vault/sdk/helper/certutil"
 )
 
+var shouldGenerateCA sync.Once
+var caCertificate *x509.Certificate
+var caKey crypto.Signer
+
 func Evaluate(req *certutil.CIEPSRequest) (*certutil.CIEPSResponse, error) {
+	shouldGenerateCA.Do(generateSelfSignedRoot)
+
 	var err error
 
 	csr := req.ParsedCSR
@@ -56,12 +64,13 @@ func Evaluate(req *certutil.CIEPSRequest) (*certutil.CIEPSResponse, error) {
 		},
 	}
 
-	parent, parentKey, err := getSelfSignedRoot()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get self-signed root: %w", err)
-	}
-
-	certBytes, err := x509.CreateCertificate(rand.Reader, cert, parent, cert.PublicKey, parentKey)
+	// XXX: Go does not currently allow marshaling/creating a certificate
+	// without signing it as is good API design. This signature by the
+	// CIEPS service is discarded by Vault and doesn't impact the final
+	// certificate (outside potentially of the SignatureAlgorithm being
+	// used IF the CIEPS service's "fake CA" matches the key type of the
+	// Vault-owned real CA.
+	certBytes, err := x509.CreateCertificate(rand.Reader, cert, caCertificate, cert.PublicKey, caKey)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal certificate template: %w", err)
 	}
@@ -71,7 +80,7 @@ func Evaluate(req *certutil.CIEPSRequest) (*certutil.CIEPSResponse, error) {
 		ParsedCertificate: &x509.Certificate{
 			Raw: certBytes,
 		},
-		StoreCert: true,
+		StoreCert: false,
 		IssuerRef: req.VaultRequestKV.IssuerID,
 	}
 
@@ -80,11 +89,10 @@ func Evaluate(req *certutil.CIEPSRequest) (*certutil.CIEPSResponse, error) {
 	return resp, nil
 }
 
-func getSelfSignedRoot() (*x509.Certificate, crypto.Signer, error) {
-	// XXX: this self-signed root could be persisted.
-	key, err := rsa.GenerateKey(rand.Reader, 2048)
+func generateSelfSignedRoot() {
+	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to generate private key: %w")
+		panic(fmt.Sprintf("failed to generate private key: %v", err))
 	}
 	pub := key.Public()
 
@@ -99,13 +107,14 @@ func getSelfSignedRoot() (*x509.Certificate, crypto.Signer, error) {
 
 	caBytes, err := x509.CreateCertificate(rand.Reader, caTemplate, caTemplate, pub, key)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to marshal CA certificate: %w", err)
+		panic(fmt.Sprintf("failed to marshal CA certificate: %v", err))
 	}
 
 	ca, err := x509.ParseCertificate(caBytes)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to unmarshal CA certificate: %w", err)
+		panic(fmt.Sprintf("failed to unmarshal CA certificate: %v", err))
 	}
 
-	return ca, key, nil
+	caCertificate = ca
+	caKey = key
 }
