@@ -1,0 +1,11 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
+---
+schema: 1.1
+partition: secure
+category: product
+summary:
+  owner: team-vault-crypto
+  description: Example Certificate Issuance External Policy Service (CIEPS) to integrate with Vault PKI
+  visibility: internal
