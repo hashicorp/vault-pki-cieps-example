@@ -19,9 +19,11 @@ import (
 	"github.com/hashicorp/vault/sdk/helper/certutil"
 )
 
-var shouldGenerateCA sync.Once
-var caCertificate *x509.Certificate
-var caKey crypto.Signer
+var (
+	shouldGenerateCA sync.Once
+	caCertificate    *x509.Certificate
+	caKey            crypto.Signer
+)
 
 func Evaluate(req *certutil.CIEPSRequest) (*certutil.CIEPSResponse, error) {
 	shouldGenerateCA.Do(generateSelfSignedRoot)

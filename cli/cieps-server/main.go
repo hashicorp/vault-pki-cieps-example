@@ -14,7 +14,7 @@ import (
 func main() {
 	serverCertFlag := flag.String("server-cert", "server.crt", "Path to the server certificate file")
 	serverKeyFlag := flag.String("server-key", "server.key", "Path to the server key file corresponding to the given certificate file")
-	listenAddrFlag := flag.String("listen", ":443", "Path to the server key file corresponding to the given certificate file")
+	listenAddrFlag := flag.String("listen", ":443", "TCP listen address in host:port format")
 	flag.Parse()
 
 	mux := http.NewServeMux()

@@ -47,7 +47,7 @@ To run the service, execute the binary:
 $ ./cieps-server -help
 Usage of ./cieps-server:
   -listen string
-    	Path to the server key file corresponding to the given certificate file (default ":443")
+    	TCP listen address in host:port format (default ":443")
   -server-cert string
     	Path to the server certificate file (default "server.crt")
   -server-key string
