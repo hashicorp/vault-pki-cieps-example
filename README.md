@@ -141,5 +141,5 @@ private_key_type    ec
 serial_number       35:dd:a2:b9:45:3f:3a:ed:79:11:60:40:72:b3:c5:3e:b1:ce:9f:c6
 ```
 
-**Note**: this service is just for example purposes only. The service should
-not be used in production as-is.
+**Note**: This sample code has been provided for illustration
+purposes only and is not meant to be used in a production environment.
