@@ -1,6 +1,7 @@
 module github.com/hashicorp/vault-pki-cieps-example
 
-go 1.23.0
+go 1.23.3
+
 toolchain go1.23.5
 
 require github.com/hashicorp/vault/sdk v0.14.1
