@@ -4,7 +4,7 @@ go 1.23.3
 
 toolchain go1.23.5
 
-require github.com/hashicorp/vault/sdk v0.15.0
+require github.com/hashicorp/vault/sdk v0.15.2
 
 require (
 	github.com/frankban/quicktest v1.14.4 // indirect
