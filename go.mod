@@ -2,7 +2,7 @@ module github.com/hashicorp/vault-pki-cieps-example
 
 go 1.25.0
 
-require github.com/hashicorp/vault/sdk v0.20.0
+require github.com/hashicorp/vault/sdk v0.21.0
 
 require (
 	github.com/frankban/quicktest v1.14.4 // indirect
