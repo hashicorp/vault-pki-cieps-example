@@ -2,7 +2,7 @@ module github.com/hashicorp/vault-pki-cieps-example
 
 go 1.25.0
 
-require github.com/hashicorp/vault/sdk v0.21.0
+require github.com/hashicorp/vault/sdk v0.24.0
 
 require (
 	github.com/frankban/quicktest v1.14.4 // indirect
@@ -17,6 +17,6 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
-	golang.org/x/crypto v0.45.0 // indirect
-	golang.org/x/sys v0.38.0 // indirect
+	golang.org/x/crypto v0.46.0 // indirect
+	golang.org/x/sys v0.40.0 // indirect
 )
